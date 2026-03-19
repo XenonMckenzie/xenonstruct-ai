@@ -1,7 +1,12 @@
+import os
 import streamlit as st
+from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
-from langchain_ollama import OllamaEmbeddings, ChatOllama
+from langchain_ollama import OllamaEmbeddings
+from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage
+
+load_dotenv()
 
 st.set_page_config(
     page_title="XenonStruct AI",
@@ -23,7 +28,10 @@ def load_chain():
         embeddings,
         allow_dangerous_deserialization=True
     )
-    llm = ChatOllama(model="tinyllama")
+    llm = ChatGroq(
+        model="llama-3.1-8b-instant",
+        api_key=os.getenv("GROQ_API_KEY")
+    )
     retriever = db.as_retriever(search_kwargs={"k": 4})
     return llm, retriever
 
